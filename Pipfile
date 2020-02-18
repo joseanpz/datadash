@@ -10,6 +10,10 @@ gunicorn = "*"
 uvicorn = "*"
 asyncpg = "*"
 fastapi = "*"
+passlib = "*"
+pyjwt = "*"
+bcrypt = "*"
+python-multipart = "*"
 
 [requires]
 python_version = "3.6"

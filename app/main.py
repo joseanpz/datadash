@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 
 from app import config
-from app.api.auth.routes import router as users_router
+from app.api.auth.routes import router as auth_router
+from app.api.user.routes import router as users_router
 from app.utils.events import (shutdown_dbconnection, startup_dbconection,
                               startup_setup_logging)
 from app.utils.exceptions import SomeException, some_exception_handler
@@ -26,4 +27,5 @@ app.add_middleware(UUIDMidleware)
 app.add_middleware(DBMidleware)
 
 # routes
-app.include_router(users_router, prefix="", tags=["usuarios"])
+app.include_router(auth_router, prefix="/api/v1", tags=["login"])
+app.include_router(users_router, prefix="/api/v1", tags=["usuarios"])

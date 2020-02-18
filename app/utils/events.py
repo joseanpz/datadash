@@ -5,7 +5,6 @@ from app.dao.config import database
 async def startup_dbconection():
     try:
         await database.crea_pool()
-        print(database)
     except Exception as e:
         print(e)
 

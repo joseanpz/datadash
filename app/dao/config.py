@@ -23,7 +23,6 @@ class PoolWrapper:
     async def crea_pool(self):
         try:
             self.pool = await create_pool(self.connurl)
-            print(self.pool)
         except Exception as e:
             print(e)
 
