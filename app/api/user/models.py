@@ -31,3 +31,7 @@ class UserBaseInDB(UserBase):
 class UserUpdate(UserBaseInDB):
     email: str = None
     password: Optional[str] = None
+
+    @property
+    def hashed_password(self):
+        return None if self.password is None else get_password_hash(self.password)

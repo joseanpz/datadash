@@ -82,6 +82,8 @@ class UserUpdate(UserRead):
     def set(self, this: APIUserUpdate):
         if getattr(this, 'email', None) is not None:
             self.email = this.email
+        if getattr(this, 'hashed_password', None) is not None:
+            self.hashed_password = this.hashed_password
         if getattr(this, 'full_name', None) is not None:
             self.full_name = this.full_name
         if getattr(this, 'is_active', None) is not None:
@@ -95,7 +97,8 @@ class UserUpdate(UserRead):
 
     @property
     def set_query(self):
-        return f"SET full_name='{self.full_name}', is_active={self.is_active}, is_superuser={self.is_superuser}"
+        return f"SET full_name='{self.full_name}', is_active={self.is_active}, " \
+               f"is_superuser={self.is_superuser}, hashed_password='{self.hashed_password}'"
 
 
 @dataclass
