@@ -38,6 +38,13 @@ async def create(response: Response, request: Request, user_input: UserCreate,
         raise HTTPException(status_code=401, detail='Unauthorized operation.')
 
 
+@router.get("/users/me", response_model=UserResponse)
+async def me(response: Response, request: Request,
+             current_dbuser: DBUserRead = Depends(get_current_active_user)):
+
+    return asdict(current_dbuser)
+
+
 @router.get("/users/{userid}", response_model=UserResponse)
 async def retrieve(response: Response, request: Request, userid: int):
     dbuser = DBUserRead(id=userid)
@@ -45,6 +52,19 @@ async def retrieve(response: Response, request: Request, userid: int):
         await dbuser.get()
     except Exception as e:
         raise HTTPException(status_code=404, detail="User not found")
+    return asdict(dbuser)
+
+
+@router.put("/users/me", response_model=UserResponse)
+async def update(response: Response, request: Request, user_input: UserUpdate,
+                 current_dbuser: DBUserRead = Depends(get_current_active_user)):
+    dbuser = DBUserUpdate(**asdict(current_dbuser))
+    try:
+        dbuser.set(user_input)
+        await dbuser.update()
+    except Exception as e:
+        raise e
+        raise HTTPException(status_code=404, detail=str(e))
     return asdict(dbuser)
 
 
@@ -70,11 +90,21 @@ async def delete(response: Response, request: Request, userid: int):
     return {"OK": 200}
 
 
-@router.get("/users/me", response_model=UserResponse)
-async def me(response: Response, request: Request, userid: int):
-    dbuser = DBUserRead(id=userid)
+@router.post("/users/register", response_model=UserResponse)
+async def register(response: Response, request: Request, user_input: UserCreate):
+    """
+    Register new user.
+    """
+    dbuser = DBUserCreate(
+        email=user_input.email,
+        hashed_password=user_input.hashed_password,
+        full_name=user_input.full_name
+    )
     try:
-        await dbuser.get()
+        await dbuser.create()
+        response.status_code = 201
+    except UniqueViolationError as e:
+        raise HTTPException(status_code=400, detail="A user with this email already exists.")
     except Exception as e:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=400, detail=f"Unmanaged error: {str(e)}")
     return asdict(dbuser)

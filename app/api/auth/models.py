@@ -1,32 +1,10 @@
 from typing import List
 
-from app.api.user.models import UserCreate, UserResponse, UserBaseInDB
 from pydantic import BaseModel
 
 
-# Shared properties
-
-
-# Properties to receive via API on creation
-class Message(BaseModel):
+class GenericResponse(BaseModel):
     msg: str
-
-class UserDB(UserResponse):
-    hashed_password: str
-    id: int = None    
-
-
-# Properties to receive via API on update
-
-
-# Additional properties to return via API
-class User(UserCreate):
-    id: int = None
-
-
-# Additional properties stored in DB
-class UserInDB(UserBaseInDB):
-    hashed_password: str
 
 
 class Token(BaseModel):

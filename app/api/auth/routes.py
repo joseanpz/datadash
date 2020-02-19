@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 from app.api.auth.dependencies import get_current_user
-from app.api.auth.models import Token, Message
+from app.api.auth.models import Token, GenericResponse
 from app.api.utils.security import generate_password_reset_token, verify_password_reset_token
 from app.api.user.models import UserCreate, UserResponse
 from app.api.utils.security import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
@@ -42,7 +42,7 @@ async def test_token(current_user: DBUserRead = Depends(get_current_user)):
     return current_user
 
 
-@router.post("/auth/password-recovery/{email}", response_model=Message)
+@router.post("/auth/password-recovery/{email}", response_model=GenericResponse)
 async def recover_password(email: str):
     """
     Password Recovery
@@ -62,7 +62,7 @@ async def recover_password(email: str):
     return {"msg": f"Password recovery email sent: {password_reset_token}"}
 
 
-@router.post("/auth/reset-password/", response_model=Message)
+@router.post("/auth/reset-password/", response_model=GenericResponse)
 async def reset_password(token: str = Body(...), new_password: str = Body(...)):
     """
     Reset password
