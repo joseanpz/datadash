@@ -8,7 +8,8 @@ from pydantic import BaseModel
 
 
 # Properties to receive via API on creation
-
+class Message(BaseModel):
+    msg: str
 
 class UserDB(UserResponse):
     hashed_password: str

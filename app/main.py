@@ -27,5 +27,5 @@ app.add_middleware(UUIDMidleware)
 app.add_middleware(DBMidleware)
 
 # routes
-app.include_router(auth_router, prefix="/api/v1", tags=["login"])
+app.include_router(auth_router, prefix="/api/v1", tags=["auth"])
 app.include_router(users_router, prefix="/api/v1", tags=["usuarios"])

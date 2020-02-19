@@ -39,6 +39,16 @@ class UserRead(BaseUser):
 
 
 @dataclass
+class UserReadByEmail(UserRead):
+    id: int = None
+    email: str = ...
+
+    @property
+    def get_query(self):
+        return f"SELECT * FROM users WHERE email={self.email} "
+
+
+@dataclass
 class UserDelete(UserRead):
 
     async def delete(self):
@@ -86,6 +96,18 @@ class UserUpdate(UserRead):
     @property
     def set_query(self):
         return f"SET full_name='{self.full_name}', is_active={self.is_active}, is_superuser={self.is_superuser}"
+
+
+@dataclass
+class UserUpdateByEmail(UserUpdate):
+
+    @property
+    def update_query(self):
+        return f"UPDATE users {self.set_query} WHERE email={self.email};"
+
+    @property
+    def set_query(self):
+        return f'SET hashed_password={self.hashed_password}'
 
 
 @dataclass
