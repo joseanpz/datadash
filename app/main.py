@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from app import config
 from app.api.auth.routes import router as auth_router
@@ -23,8 +24,22 @@ app.add_event_handler('shutdown', shutdown_dbconnection)
 app.add_exception_handler(SomeException, some_exception_handler)
 
 # middleware
+origins = [
+    "http://localhost",
+    "http://localhost:8080",
+    "http://10.101.1.68:8080",
+    "http://10.101.1.145:8080"
+]
+
 app.add_middleware(UUIDMidleware)
 app.add_middleware(DBMidleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # routes
 app.include_router(auth_router, prefix="/api/v1", tags=["auth"])
