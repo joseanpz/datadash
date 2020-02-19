@@ -17,7 +17,7 @@ from app.dao.user.schemas import UserRead as DBUserRead, UserReadByEmail as DBUs
 router = APIRouter()
 
 
-@router.post("/auth/token", response_model=Token)
+@router.post("/auth/access-token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await UserAuth(email=form_data.username, password=form_data.password).authenticate()
     if not user:
