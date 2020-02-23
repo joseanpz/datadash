@@ -16,7 +16,7 @@ app = FastAPI(
 )
 
 # events handlers
-# app.add_event_handler('startup', startup_setup_logging)
+app.add_event_handler('startup', startup_setup_logging)
 app.add_event_handler('startup', startup_dbconection)
 app.add_event_handler('shutdown', shutdown_dbconnection)
 
