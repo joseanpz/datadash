@@ -16,7 +16,7 @@ app = FastAPI(
 )
 
 # events handlers
-app.add_event_handler('startup', startup_setup_logging)
+# app.add_event_handler('startup', startup_setup_logging)
 app.add_event_handler('startup', startup_dbconection)
 app.add_event_handler('shutdown', shutdown_dbconnection)
 
@@ -28,7 +28,10 @@ origins = [
     "http://localhost",
     "http://localhost:8080",
     "http://10.101.1.68:8080",
-    "http://10.101.1.145:8080"
+    "http://10.101.1.145:8080",
+    "http://192.168.15.4:8080",
+    "http://192.168.15.9:8080",
+    "http://api.datadash.com"
 ]
 
 app.add_middleware(UUIDMidleware)
@@ -42,5 +45,5 @@ app.add_middleware(
 )
 
 # routes
-app.include_router(auth_router, prefix="/api/v1", tags=["auth"])
-app.include_router(users_router, prefix="/api/v1", tags=["usuarios"])
+app.include_router(auth_router, prefix="/v1", tags=["auth"])
+app.include_router(users_router, prefix="/v1", tags=["usuarios"])

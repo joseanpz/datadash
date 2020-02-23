@@ -10,7 +10,7 @@ from app.api.auth.models import TokenData
 from app.dao.user.schemas import UserRead
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/api/v1/auth/access-token",
+    tokenUrl="/v1/auth/access-token",
     scopes={"me": "Read information about the current user.", "items": "Read items."},
 )
 
