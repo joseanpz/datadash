@@ -1,3 +1,6 @@
+import logging
+import time
+
 from asyncpg import UniqueViolationError
 from dataclasses import asdict
 from fastapi import APIRouter, HTTPException, Depends
@@ -10,6 +13,8 @@ from app.dao.user.schemas import UserRead as DBUserRead, UserDelete as DBUserDel
     UserCreate as DBUserCreate
 
 # from app.utils import send_new_account_email
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -58,6 +63,7 @@ async def retrieve(response: Response, request: Request, userid: int):
 @router.put("/users/me", response_model=UserResponse)
 async def update(response: Response, request: Request, user_input: UserUpdate,
                  current_dbuser: DBUserRead = Depends(get_current_active_user)):
+    start_time = time.time()
     dbuser = DBUserUpdate(**asdict(current_dbuser))
     try:
         dbuser.set(user_input)
@@ -65,6 +71,8 @@ async def update(response: Response, request: Request, user_input: UserUpdate,
     except Exception as e:
         raise e
         raise HTTPException(status_code=404, detail=str(e))
+    process_time = time.time() - start_time
+    logger.info(f'Database time processing (update service): {str(process_time)}')
     return asdict(dbuser)
 
 

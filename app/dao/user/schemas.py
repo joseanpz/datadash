@@ -1,9 +1,14 @@
+import logging
+import time
+
 from asyncpg import UniqueViolationError
 from asyncpg.protocol.protocol import Record
 from dataclasses import dataclass
 
 from app.api.user.models import UserUpdate as APIUserUpdate
 from app.dao.config import database
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -22,7 +27,10 @@ class UserRead(BaseUser):
     async def get(self):
         cursor = await database.pool.acquire()
         try:
+            start_time = time.time()
             record = await cursor.fetchrow(self.get_query)
+            process_time = time.time() - start_time
+            logger.info(f'Database time processing (get): {str(process_time)}')
             self.setfromdb(record)
         finally:
             await database.pool.release(cursor)
@@ -54,7 +62,10 @@ class UserDelete(UserRead):
     async def delete(self):
         cursor = await database.pool.acquire()
         try:
+            start_time = time.time()
             await cursor.execute(self.delete_query)
+            process_time = time.time() - start_time
+            logger.info(f'Database time processing (delete): {str(process_time)}')
         finally:
             await database.pool.release(cursor)
 
@@ -74,8 +85,10 @@ class UserUpdate(UserRead):
     async def update(self):
         cursor = await database.pool.acquire()
         try:
-            record = await cursor.execute(self.update_query)
-            print(record)
+            start_time = time.time()
+            await cursor.execute(self.update_query)
+            process_time = time.time() - start_time
+            logger.info(f'Database time processing (update): {str(process_time)}')
         finally:
             await database.pool.release(cursor)
 
@@ -97,8 +110,11 @@ class UserUpdate(UserRead):
 
     @property
     def set_query(self):
-        return f"SET full_name='{self.full_name}', is_active={self.is_active}, " \
-               f"is_superuser={self.is_superuser}, hashed_password='{self.hashed_password}'"
+        query = f"SET full_name='{self.full_name}', is_active={self.is_active}, " \
+                f"is_superuser={self.is_superuser}"
+        if self.hashed_password is not None:
+            query = f"{query}, hashed_password='{self.hashed_password}'"
+        return query
 
 
 @dataclass
@@ -129,7 +145,10 @@ class UserCreate(BaseUser):
     async def create(self):
         cursor = await database.pool.acquire()
         try:
+            start_time= time.time()
             self.id = await cursor.fetchval(self.create_query)
+            process_time = time.time() - start_time
+            logger.info(f'Database time processing (create): {str(process_time)}')
         except UniqueViolationError as e:
             print(e)
             raise e
