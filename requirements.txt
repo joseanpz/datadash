@@ -11,7 +11,7 @@ httptools==0.1.1 ; sys_platform != 'win32' and sys_platform != 'cygwin' and plat
 passlib==1.7.2
 pycparser==2.19
 pydantic==1.4
-pyjwt==1.7.1
+pyjwt==2.4.0
 python-multipart==0.0.5
 six==1.14.0
 starlette==0.12.9
